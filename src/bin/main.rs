@@ -6,14 +6,16 @@ use std::net::TcpStream;
 use std::fs::File;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
+    let listener = TcpListener::bind("127.0.0.1:20000").unwrap();
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
         println!("Connection established!");
 
-        handleConnection(stream);
+        thread::spawn(|| {
+            handleConnection(stream);
+        });
     }
 }
 
