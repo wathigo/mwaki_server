@@ -29,7 +29,7 @@ impl ThreadPool {
         let mut workers = Vec::with_capacity(size);
         for id in 0..size {
             // Create and store threads
-            workers.push(Worker::new(id, receiver));
+            workers.push(Worker::new(id, receiver.clone()));
         }
         ThreadPool {
             workers,
@@ -50,7 +50,7 @@ struct Worker {
 }
 
 impl Worker {
-    fn new(id: usize, receiver: Arc<Mutex<thread::Receiver<Job>>>) -> Worker {
+    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
         let thread = thread::spawn(|| {
             receiver;
         });
