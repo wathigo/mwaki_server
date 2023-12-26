@@ -1,5 +1,7 @@
 use std::thread;
 use std::sync::mpsc;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 pub struct ThreadPool {
     workers: Vec<Worker>,
@@ -21,6 +23,8 @@ impl ThreadPool {
         assert!(size > 0);
 
         let (sender, receiver) = mpsc::channel();
+
+        let receiver = Arc::new(Mutex::new(receiver));
 
         let mut workers = Vec::with_capacity(size);
         for id in 0..size {
@@ -46,7 +50,7 @@ struct Worker {
 }
 
 impl Worker {
-    fn new(id: usize, receiver: thread::Receiver<Job>) -> Worker {
+    fn new(id: usize, receiver: Arc<Mutex<thread::Receiver<Job>>>) -> Worker {
         let thread = thread::spawn(|| {
             receiver;
         });
