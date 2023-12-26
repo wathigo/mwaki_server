@@ -8,7 +8,7 @@ pub struct ThreadPool {
     sender: mpsc::Sender<Job>,
 }
 
-struct Job;
+type Job = Box<FnOnce() + Send + 'static>;
  
 impl ThreadPool {
     /// Create a new ThreadPool.
@@ -40,7 +40,8 @@ impl ThreadPool {
     pub fn execute<F>(&self, f: F) 
         where F: FnOnce() + Send + 'static
         {
-
+            let job = Box::new(f);
+            self.sender.Send(job).unwrap();
         }
 }
 
