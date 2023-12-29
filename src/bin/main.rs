@@ -9,11 +9,20 @@ extern crate mwaki_server;
 use mwaki_server::ThreadPool;
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:20000").unwrap();
+    let listener = TcpListener::bind("127.0.0.1:20002").unwrap();
 
     let pool = ThreadPool::new(4);
+    let mut counter = 0;
 
     for stream in listener.incoming() {
+        println!("Counter {}", counter);
+        if counter == 10 {
+            println!("Shutting down!");
+            break;
+        }
+
+        counter += 1;
+
         let stream = stream.unwrap();
 
         println!("Connection established!");
